@@ -281,12 +281,17 @@ sub make_random_data
 {
     my ($self, $kb, %params) = @_;
     my $data = '';
+    my $line = '';
     $params{minreps} = 10
 	unless defined $params{minreps};
     $params{maxreps} = 100
 	unless defined $params{maxreps};
     $params{separators} = ' '
 	unless defined $params{separators};
+    $params{maxlinesize} = 78
+	unless defined $params{maxlinesize};
+    $params{lineseparator} = "\x{0d}\x{0a}"
+	unless defined $params{lineseparator};
     my $sepidx = 0;
     while (!defined $kb || length($data) < 1024*$kb)
     {
@@ -298,11 +303,28 @@ sub make_random_data
 	    my $sep = substr($params{separators},
 			     $sepidx % length($params{separators}), 1);
 	    $sepidx++;
-	    $data .= $sep . $word;
+	    if ($params{maxlinesize}) {
+		$line .= $sep . $word;
+		if (length($line) >= $params{maxlinesize}) {
+		    $data .= $params{lineseparator}
+			if (length($data));
+		    $data .= $line;
+		    $line = '';
+		}
+	    }
+	    else {
+		$data .= $sep . $word;
+	    }
 	    $count--;
 	}
 	last unless defined $kb;
     }
+    if ($params{maxlinesize} && length($line)) {
+	$data .= $params{lineseparator}
+	    if (length($data));
+	$data .= $line;
+    }
+
     return $data;
 }
 
