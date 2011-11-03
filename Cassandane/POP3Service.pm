@@ -39,66 +39,37 @@
 #  OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-package Cassandane::ServiceFactory;
+package Cassandane::POP3Service;
 use strict;
 use warnings;
+use base qw(Cassandane::Service);
 use Cassandane::Util::Log;
-use Cassandane::Service;
-use Cassandane::IMAPService;
-use Cassandane::POP3Service;
 
-sub create
+sub new
 {
     my $class = shift;
-    my $name = shift;
-    my %params = @_;
+    my $self = $class->SUPER::new(@_);
+    return $self;
+}
 
-    die "No name specified"
-	unless defined $name;
+# Return a hash of parameters suitable for passing
+# to MessageStoreFactory::create.
+sub store_params
+{
+    my ($self, %params) = @_;
 
-    # try and guess some service-specific defaults
-    if ($name =~ m/imap/)
-    {
-	return Cassandane::IMAPService->new($name,
-				argv => ['imapd'],
-				%params);
-    }
-    elsif ($name =~ m/pop3/)
-    {
-	return Cassandane::POP3Service->new($name,
-				argv => ['pop3d'],
-				%params);
-    }
-    elsif ($name =~ m/sync/)
-    {
-	return Cassandane::Service->new($name,
-				argv => ['sync_server'],
-				%params);
-    }
-    elsif ($name =~ m/lmtp/)
-    {
-	return Cassandane::Service->new($name,
-				argv => ['lmtpd'],
-				%params);
-    }
-    elsif ($name =~ m/sieve/)
-    {
-	return Cassandane::Service->new($name,
-				argv => ['timsieved'],
-				%params);
-    }
-    elsif ($name =~ m/nntp/)
-    {
-	return Cassandane::Service->new($name,
-				argv => ['nntpd'],
-				%params);
-    }
-    else
-    {
-	die "No command specified and cannot guess a default"
-	    unless defined $params{argv};
-	return Cassandane::Service->new($name, %params);
-    }
+    $params{type} = 'pop3';
+    $params{host} = $self->{host};
+    $params{port} = $self->{port};
+    $params{folder} = 'inbox'
+	unless defined $params{folder};
+    $params{username} = 'cassandane'
+	unless defined $params{username};
+    $params{password} = 'testpw'
+	unless defined $params{password};
+    $params{verbose} = get_verbose
+	unless defined $params{verbose};
+    return \%params;
 }
 
 1;

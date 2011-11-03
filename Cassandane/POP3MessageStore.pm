@@ -131,7 +131,7 @@ sub _connect
     $self->{client} = $client;
 }
 
-sub _disconnect
+sub disconnect
 {
     my ($self) = @_;
 
