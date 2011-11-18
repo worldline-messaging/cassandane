@@ -124,6 +124,18 @@ sub get
     return undef;
 }
 
+sub get_switch
+{
+    my ($self, $n) = @_;
+    my $value = lc($self->get($n));
+
+    return 0 if (!defined($value));
+    my $letter = substr($value, 0, 1);
+
+    return (($letter eq '1') || ($letter eq 'y') || ($value eq 'on')
+	|| ($letter eq 't')) ? 1 : 0
+}
+
 sub set_variables
 {
     my ($self, %nv) = @_;
