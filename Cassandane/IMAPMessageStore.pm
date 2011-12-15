@@ -159,18 +159,28 @@ sub _select
 sub write_begin
 {
     my ($self) = @_;
-    my $r;
 
     $self->_connect();
 
-    $r = $self->_select();
-    if (!defined $r)
-    {
-	die "Cannot select folder \"$self->{folder}\": $@"
-	    unless $self->{client}->get_last_error() =~ m/does not exist/;
-	$self->{client}->create($self->{folder})
-	    or die "Cannot create folder \"$self->{folder}\": $@"
+    my $talk = $self->{client};
+    my $folder = $self->{folder};
+    return if ($talk->{CurrentFolder} eq $folder);
+
+    my $exists = 0;
+    my @res = $talk->list('', $folder);
+    if ((scalar(@res) == 1) && (scalar(@{$res[0]}) >= 3)) {
+	$exists = 1;
+	foreach my $attribute (@{$res[0]->[0]}) {
+	    if (lc($attribute) eq '\\noselect') {
+		$exists = 0;
+		last;
+	    }
+	}
     }
+    return if ($exists);
+
+    $talk->create($folder)
+	or die "Cannot create folder \"$folder\": $@"
 }
 
 sub write_message

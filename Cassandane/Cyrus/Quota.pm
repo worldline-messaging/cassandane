@@ -514,6 +514,7 @@ sub test_using_annotstorage_msg
     foreach my $folder ("INBOX", "INBOX.sub1", "INBOX.sub2")
     {
 	$self->{store}->set_folder($folder);
+	$self->{store}->_select();
 	$expecteds{$folder} = 0;
 	my $uid = 1;
 	for (1..5)
@@ -584,6 +585,7 @@ sub test_using_annotstorage_msg_late
     foreach my $folder ("INBOX", "INBOX.sub1", "INBOX.sub2")
     {
 	$self->{store}->set_folder($folder);
+	$self->{store}->_select();
 	$expecteds{$folder} = 0;
 	my $uid = 1;
 	for (1..5)
@@ -755,6 +757,7 @@ sub test_quotarename
 	message => 0,
 	'x-annotation-storage' => 0,
     );
+    $self->{store}->_select();
 
     my $expected_storage = 0;
     my $expected_message = 0;
@@ -928,8 +931,6 @@ sub test_quota_f_vs_update
 				      extra_lines => 2000+rand(5000));
 	$expected += length($msg->as_string());
     }
-    # unselect so quota -f can lock the mailboxes
-    $imaptalk->unselect();
 
     xlog "Check that we have some quota usage";
     $self->_check_usages(storage => int($expected/1024));
@@ -1148,6 +1149,7 @@ sub test_bz3529
 
     xlog "make some messages to hang annotations on";
 # 	$self->{store}->set_folder($folder);
+    $self->{store}->_select();
     my $uid = 1;
     my %msgs;
     for (1..20)
@@ -1582,6 +1584,7 @@ sub test_using_annotstorage_msg_copy_exdel
 	or die "Cannot create mailbox $to_folder: $@";
 
     $store->set_folder($from_folder);
+    $store->_select();
 
     xlog "Append some messages and store annotations";
     my %exp;
@@ -1690,6 +1693,7 @@ sub test_using_annotstorage_msg_copy_eximm
 	or die "Cannot create mailbox $to_folder: $@";
 
     $store->set_folder($from_folder);
+    $store->_select();
 
     xlog "Append some messages and store annotations";
     my %exp;
@@ -1785,6 +1789,7 @@ sub test_using_annotstorage_msg_copy_dedel
 	or die "Cannot create mailbox $to_folder: $@";
 
     $store->set_folder($from_folder);
+    $store->_select();
 
     xlog "Append some messages and store annotations";
     my %exp;
@@ -1892,6 +1897,7 @@ sub test_using_annotstorage_msg_copy_deimm
 	or die "Cannot create mailbox $to_folder: $@";
 
     $store->set_folder($from_folder);
+    $store->_select();
 
     xlog "Append some messages and store annotations";
     my %exp;
@@ -1989,6 +1995,7 @@ sub test_reconstruct
     $self->assert_str_equals('ok', $talk->get_last_completion_response());
 
     xlog "add some messages";
+    $store->_select();
     my $uid = 1;
     my %exp;
     for (1..10)
@@ -2110,6 +2117,7 @@ sub test_reconstruct_orphans
     $self->assert_str_equals('ok', $talk->get_last_completion_response());
 
     xlog "add some messages";
+    $store->_select();
     my $uid = 1;
     my %exp;
     for (1..10)

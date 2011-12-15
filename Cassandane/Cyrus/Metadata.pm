@@ -614,6 +614,7 @@ sub test_permessage_getset
     xlog "testing getting and setting message scope annotations";
 
     my $talk = $self->{store}->get_client();
+    $self->{store}->_select();
 
     xlog "Append 3 messages";
     my %msg;
@@ -754,6 +755,7 @@ sub test_permessage_unknown
 
     xlog "fetch annotation - should be no values";
     my $talk = $self->{store}->get_client();
+    $self->{store}->_select();
     my $res = $talk->fetch('1:*',
 			   ['annotation', [$entry, $attrib]]);
     $self->assert_str_equals('ok', $talk->get_last_completion_response());
@@ -805,6 +807,7 @@ sub test_permessage_unknown_allowed
 
     xlog "fetch annotation - should be no values";
     my $talk = $self->{store}->get_client();
+    $self->{store}->_select();
     my $res = $talk->fetch('1:*',
 			   ['annotation', [$entry, $attrib]]);
     $self->assert_str_equals('ok', $talk->get_last_completion_response());
@@ -1946,6 +1949,7 @@ sub test_copy_messages
 	or die "Cannot create mailbox $to_folder: $@";
 
     $store->set_folder($from_folder);
+    $store->_select();
 
     my @data_by_uid = (
 	undef,
@@ -2029,6 +2033,7 @@ sub test_cvt_cyrusdb
     $self->assert_str_equals('ok', $talk->get_last_completion_response());
 
     xlog "add some messages";
+    $store->_select();
     my $uid = 1;
     my %exp;
     for (1..10)
@@ -2234,6 +2239,7 @@ sub folder_delete_msg_common
     xlog "create a mailbox";
     $imaptalk->create($folder)
 	or die "Cannot create mailbox $folder: $@";
+    $self->{store}->_select();
 
     xlog "add some messages";
     my $uid = 1;
@@ -2264,6 +2270,7 @@ sub folder_delete_msg_common
 	or die "Cannot create mailbox $folder: $@";
 
     xlog "create some new messages";
+    $self->{store}->_select();
     %exp = ();
     $uid = 1;
     for (1..10)

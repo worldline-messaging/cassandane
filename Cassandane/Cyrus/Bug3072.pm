@@ -74,6 +74,7 @@ sub test_copy_longset
     my $imaptalk = $self->{store}->get_client();
 
     $imaptalk->create("INBOX.dest");
+    $self->{store}->_select();
     for (1..2000) {
 	$self->make_message("Message $_");
     }
