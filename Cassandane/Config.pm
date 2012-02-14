@@ -127,9 +127,10 @@ sub get
 sub get_switch
 {
     my ($self, $n) = @_;
-    my $value = lc($self->get($n));
+    my $value = $self->get($n);
 
     return 0 if (!defined($value));
+    $value = lc($value);
     my $letter = substr($value, 0, 1);
 
     return (($letter eq '1') || ($letter eq 'y') || ($value eq 'on')
