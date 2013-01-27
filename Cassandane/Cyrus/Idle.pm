@@ -348,17 +348,15 @@ sub common_shutdownfile
     $self->assert_str_equals($shut_message, $got_bye_alert);
 
     xlog "Check that the server disconnected";
-    eval
     {
-	# We use _send_cmd() and _next_atom() rather the normal path
-	# through _imap_cmd() because the latter will warn() to stderr
-	# about the exception we're about to generate, which is
-	# downright untidy.
-	$talk->_send_cmd('status', 'INBOX', '(messages unseen)');
-	$talk->_parse_response({});
-    };
-    my $mm = $@;    # this doesn't survive unless we save it
-    $self->assert_matches(qr/IMAP Connection closed by other end/, $mm);
+	# shut up
+	local $SIG{__DIE__};
+	local $SIG{__WARN__} = sub { 1 };
+
+	eval { $talk->noop() };
+	my $Err = $@;
+	$self->assert_matches(qr/Connection was unexpectedly closed by host/, $Err);
+    }
 }
 
 sub test_shutdownfile_idled

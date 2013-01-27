@@ -349,7 +349,7 @@ sub test_admin_inbox_imm
 	xlog "Client was disconnected";
 	eval { $talk->select($inbox) };
 	my $Err = $@;
-	$self->assert_matches(qr/IMAP Connection closed by other end/, $Err);
+	$self->assert_matches(qr/Connection was unexpectedly closed by host/, $Err);
 
 	# reconnect 
 	$talk = $store->get_client();
