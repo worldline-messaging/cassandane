@@ -45,9 +45,6 @@ package Cassandane::Cyrus::Userid;
 use base qw(Cassandane::Cyrus::TestCase);
 use Cassandane::Util::Log;
 
-Cassandane::Cyrus::TestCase::magic(NoAutocreate => sub {
-    shift->config_set('autocreate_users' => 'nobody');
-});
 Cassandane::Cyrus::TestCase::magic(PopUseACL => sub {
     shift->config_set('popuseacl' => 'yes');
 });
@@ -76,7 +73,7 @@ sub tear_down
 
 # Tests userid with dots and unix hierarchy separator
 sub test_dots_unix
-    :UnixHierarchySep NoAutocreate PopUseACL
+    :UnixHierarchySep PopUseACL
 {
     my ($self) = @_;
 
