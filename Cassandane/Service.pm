@@ -140,6 +140,12 @@ sub master_params
     return $params;
 }
 
+sub set_master_param
+{
+    my ($self, $param, $value) = @_;
+    $self->SUPER::set_master_param($param, $value);
+}
+
 sub address
 {
     my ($self) = @_;
