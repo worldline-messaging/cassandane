@@ -1,0 +1,125 @@
+#
+# Example cassandane.ini file
+#
+#  Copyright (c) 2011 Opera Software Australia Pty. Ltd.  All rights
+#  reserved.
+#
+#  Redistribution and use in source and binary forms, with or without
+#  modification, are permitted provided that the following conditions
+#  are met:
+#
+#  1. Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+#
+#  2. Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in
+#     the documentation and/or other materials provided with the
+#     distribution.
+#
+#  3. The name "Opera Software Australia" must not be used to
+#     endorse or promote products derived from this software without
+#     prior written permission. For permission or any legal
+#     details, please contact
+# 	Opera Software Australia Pty. Ltd.
+# 	Level 50, 120 Collins St
+# 	Melbourne 3000
+# 	Victoria
+# 	Australia
+#
+#  4. Redistributions of any form whatsoever must retain the following
+#     acknowledgment:
+#     "This product includes software developed by Opera Software
+#     Australia Pty. Ltd."
+#
+#  OPERA SOFTWARE AUSTRALIA DISCLAIMS ALL WARRANTIES WITH REGARD TO
+#  THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+#  AND FITNESS, IN NO EVENT SHALL OPERA SOFTWARE AUSTRALIA BE LIABLE
+#  FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+#  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN
+#  AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
+#  OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+
+# This section describes configurable properties of the
+# Cassandane infrastructure
+[cassandane]
+# Directory under which all the instance directories
+# will be created.  It's wise to keep this short.
+##rootdir = /var/tmp/cass
+# Which SASL password checking method to use:
+# alwaystrue
+#    is the default and it makes libsasl conveniently accept
+#    any old password, but it can be configured out at libsasl
+#    build time e.g. on older RedHat builds.
+# sasldb
+#    can be used for those RedHat systems, as it's always available
+#    in libsasl.  Cassandane will build a sasldb2 file containing
+#    usernames and passwords, but it requires installing the package
+#    containing the saslpasswd2 binary.
+##pwcheck = alwaystrue
+# Whether to clean up instance directories after their tests have
+# run (also, will remove and old instance directories from earlier
+# runs).  See also the --cleanup option to testrunner.pl.
+##cleanup = no
+
+# This section describes configurable properties of Valgrind.
+[valgrind]
+# Whether to run Cyrus binaries under Valgrind (see also the
+# --valgrind option to testrunner.pl)
+##enabled = no
+# Where to find the Valgrind binary
+##binary = /usr/bin/valgrind
+# File containing Valgrind suppression rules
+##suppressions = vg.supp
+# Other arguments passed to Valgrind
+##arguments = -q --tool=memcheck --leak-check=full --run-libc-freeres=no
+
+# This section describes the default Cyrus installation.
+[cyrus default]
+# Prefix of the installation; should be the value which
+# was supplied as --prefix and --cyrus-prefix to the
+# Cyrus configure script.  Binaries will be found in
+# the directory {prefix}/bin
+##prefix = /usr/cyrus
+# A non-standard or temporary place where the installation
+# has been made, e.g. by
+# make DESTDIR=/tmp/my-cyrus-inst install
+# If set, binaries will be in {destdir}{prefix}/bin
+##destdir =
+
+# This section enables GDB debugging of services run from Cyrus master
+# on a per-service basis.  To debug, enable one of these, run
+# Cassandane, and look in syslog for helpful instructions from gdbtramp.
+[gdb]
+##imapd = yes
+##sync_server = yes
+##lmtpd = yes
+##timsieved = yes
+
+# This section describes the common configuration parameters to set
+# for each test. This overrides the bare hardcoded configuration, and is
+# overridden by the test case configuration.
+# Some variables of the form @varname@ are available:
+#  name: instance name
+#  basedir: instance directory
+#  cyrus_prefix: cyrus path
+#  prefix: working directory
+[config]
+##sasl_mech_list = PLAIN LOGIN DIGEST-MD5
+##debug_command = @prefix@/utils/gdbtramp %s %d
+event_notifier = log
+event_groups = message mailbox flags
+event_extra_params = bodyStructure messageContent
+
+# This section describes how Cassandane interacts with the ImapTest
+# testsuite, which is a test suite for IMAP servers written by the
+# Dovecot team and downloadable from http://www.imapwiki.org/ImapTest/
+[imaptest]
+# The base directory of a built but not installed ImapTest.  If empty,
+# no ImapTests will be found or run.
+##basedir =
+# A list of tests which will be suppressed, i.e. not reported and not
+# run.  The default value is the list of ImapTest tests which are known
+# to trigger unfixed bugs in Cyrus at the moment, hopefully that will
+# shrink to nil in the future.
+##suppress = listext subscribe
